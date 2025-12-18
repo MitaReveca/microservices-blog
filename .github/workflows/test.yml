@@ -16,27 +16,38 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+
+      # Posts service
       - run: npm install
-        working-directory: ./posts
+        working-directory: ./simple-microservices-main/posts
       - run: npm test
-        working-directory: ./posts
+        working-directory: ./simple-microservices-main/posts
+
+      # Comments service
       - run: npm install
-        working-directory: ./comments
+        working-directory: ./simple-microservices-main/comments
       - run: npm test
-        working-directory: ./comments
+        working-directory: ./simple-microservices-main/comments
+
+      # Query service
       - run: npm install
-        working-directory: ./query
+        working-directory: ./simple-microservices-main/query
       - run: npm test
-        working-directory: ./query
+        working-directory: ./simple-microservices-main/query
+
+      # Moderation service
       - run: npm install
-        working-directory: ./moderation
+        working-directory: ./simple-microservices-main/moderation
       - run: npm test
-        working-directory: ./moderation
+        working-directory: ./simple-microservices-main/moderation
+
+      # Client
       - run: npm install
-        working-directory: ./client
+        working-directory: ./simple-microservices-main/client
       - run: npm test
-        working-directory: ./client
+        working-directory: ./simple-microservices-main/client
