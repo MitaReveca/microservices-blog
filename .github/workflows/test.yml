@@ -1,4 +1,4 @@
-name: Node.js CI
+name: Run Tests for Microservices
 
 on:
   push:
@@ -7,47 +7,28 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [18]
+        service: [posts, comments, query, event-bus, client, moderation]
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: "20"
 
-      # Posts service
-      - run: npm install
-        working-directory: ./simple-microservices-main/posts
-      - run: npm test
-        working-directory: ./simple-microservices-main/posts
+      - name: Install dependencies
+        run: |
+          cd ${{ matrix.service }}
+          npm install
 
-      # Comments service
-      - run: npm install
-        working-directory: ./simple-microservices-main/comments
-      - run: npm test
-        working-directory: ./simple-microservices-main/comments
-
-      # Query service
-      - run: npm install
-        working-directory: ./simple-microservices-main/query
-      - run: npm test
-        working-directory: ./simple-microservices-main/query
-
-      # Moderation service
-      - run: npm install
-        working-directory: ./simple-microservices-main/moderation
-      - run: npm test
-        working-directory: ./simple-microservices-main/moderation
-
-      # Client
-      - run: npm install
-        working-directory: ./simple-microservices-main/client
-      - run: npm test
-        working-directory: ./simple-microservices-main/client
+      - name: Run tests
+        run: |
+          cd ${{ matrix.service }}
+          npm test
