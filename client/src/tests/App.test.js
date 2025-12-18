@@ -1,8 +1,16 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom'; // <-- добавь эту строку
 import App from '../App';
 
-test('renders welcome text', () => {
+test('renders Create Post heading', () => {
   render(<App />);
-  const linkElement = screen.getByText(/welcome/i);
-  expect(linkElement).toBeInTheDocument();
+  const heading = screen.getByText(/Create Post/i);
+  expect(heading).toBeInTheDocument();
+});
+
+test('renders Posts heading', () => {
+  render(<App />);
+  const heading = screen.getByText(/Posts/i);
+  expect(heading).toBeInTheDocument();
 });

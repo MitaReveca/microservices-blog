@@ -8,6 +8,7 @@ app.use(bodyParser.json());
 
 const DB = {};
 
+// Создание комментария
 app.post('/posts/:id/comments', (req, res) => {
   const id = randomBytes(4).toString('hex');
   const postId = req.params.id;
@@ -16,6 +17,13 @@ app.post('/posts/:id/comments', (req, res) => {
   comments.push({ id, content });
   DB[postId] = comments;
   res.status(200).json({ message: "comment created", data: { id, content } });
+});
+
+// Получение всех комментариев для поста
+app.get('/posts/:id/comments', (req, res) => {
+  const postId = req.params.id;
+  const comments = DB[postId] || [];
+  res.status(200).json(comments);
 });
 
 describe("Comments Service", () => {
