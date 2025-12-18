@@ -36,3 +36,7 @@ jobs:
         working-directory: ./moderation
       - run: npm test
         working-directory: ./moderation
+      - run: npm install
+        working-directory: ./client
+      - run: npm test
+        working-directory: ./client
