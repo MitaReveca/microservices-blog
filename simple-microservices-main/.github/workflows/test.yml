@@ -1,0 +1,38 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+        working-directory: ./posts
+      - run: npm test
+        working-directory: ./posts
+      - run: npm install
+        working-directory: ./comments
+      - run: npm test
+        working-directory: ./comments
+      - run: npm install
+        working-directory: ./query
+      - run: npm test
+        working-directory: ./query
+      - run: npm install
+        working-directory: ./moderation
+      - run: npm test
+        working-directory: ./moderation
