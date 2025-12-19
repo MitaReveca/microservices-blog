@@ -4,23 +4,18 @@ import CommentCreate from "./CommentCreate";
 import CommentList from "./CommentList";
 
 const PostList = () => {
-  const [posts, setPosts] = useState({}); // дефолт пустой объект
+  const [posts, setPosts] = useState({});
 
   const fetchPosts = async () => {
-    try {
-      const res = await axios.get("http://posts.com/posts");
-      setPosts(res.data.data || {}); // защита на случай undefined
-    } catch (err) {
-      console.error("Error fetching posts:", err);
-      setPosts({}); // если ошибка, оставляем пустой объект
-    }
+    const res = await axios.get("http://posts.com/posts");
+    setPosts(res.data.data);
   };
 
   useEffect(() => {
     fetchPosts();
   }, []);
 
-  const renderedPosts = Object.values(posts || {}).map((post) => {
+  const renderedPosts = Object.values(posts).map(post => {
     return (
       <div
         className="card"
@@ -29,7 +24,7 @@ const PostList = () => {
       >
         <div className="card-body">
           <h3>{post.title}</h3>
-          <CommentList postId={post.id} comments={post.comments || []} />
+          <CommentList postId={post.id} comments={post.comments} />
           <CommentCreate postId={post.id} />
         </div>
       </div>

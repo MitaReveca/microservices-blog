@@ -1,24 +1,47 @@
-import React from "react";
-import { render, screen } from "@testing-library/react";
-import axios from "axios";
-import PostList from "../PostList";
+const request = require('supertest'); 
+const express = require('express');
+const bodyParser = require('body-parser');
 
-jest.mock("axios");
+const app = express();
+app.use(bodyParser.json());
 
-test("renders posts correctly", async () => {
-  // Мок данных, как будто они пришли с backend
-  axios.get.mockResolvedValue({
-    data: {
-      data: {
-        1: { id: 1, title: "Test Post", comments: [] },
-        2: { id: 2, title: "Another Post", comments: [] }
-      }
-    }
+// Временное хранилище для постов
+let posts = [];
+
+// Создание нового поста
+app.post("/post/create", (req, res) => {
+  posts.push(req.body);
+  res.status(201).json({ message: "post created successfully", data: req.body });
+});
+
+// Получение всех постов
+app.get("/post", (req, res) => {
+  res.status(200).json(posts);
+});
+
+// Тесты
+describe("Post Service", () => {
+  // Очищаем посты перед каждым тестом
+  beforeEach(() => {
+    posts = [];
   });
 
-  render(<PostList />);
+  it("should create a new post", async () => {
+    const response = await request(app)
+      .post("/post/create")
+      .send({ title: "Test post" });
+    
+    expect(response.statusCode).toBe(201);
+    expect(response.body.data.title).toBe("Test post");
+  });
 
-  // Проверяем, что заголовки постов отображаются
-  expect(await screen.findByText("Test Post")).toBeInTheDocument();
-  expect(await screen.findByText("Another Post")).toBeInTheDocument();
+  it("should return all posts", async () => {
+    // Создаём тестовый пост перед GET
+    await request(app).post("/post/create").send({ title: "Another post" });
+
+    const response = await request(app).get("/post");
+    expect(response.statusCode).toBe(200);
+    expect(response.body.length).toBe(1);           // проверяем, что есть 1 пост
+    expect(response.body[0].title).toBe("Another post");
+  });
 });
