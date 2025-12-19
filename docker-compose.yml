@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  posts:
+    build: ./posts
+    image: reveca/posts:latest
+    ports:
+      - "8001:8001"
+
+  event-bus:
+    build: ./event-bus
+    image: reveca/event-bus:latest
+    ports:
+      - "8005:8005"
+
+  client:
+    build: ./client
+    image: reveca/client:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_POSTS_URL=http://posts:8001/posts

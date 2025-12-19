@@ -14,3 +14,6 @@ test('renders Posts heading', () => {
   const heading = screen.getByText(/Posts/i);
   expect(heading).toBeInTheDocument();
 });
+
+import axios from 'axios';
+jest.mock('axios');
