@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: CI/CD Pipeline for Microservices
 
 on:
   push:
@@ -7,41 +7,39 @@ on:
     branches: [main]
 
 jobs:
-  build-test-deploy:
+  build-test-and-deploy:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        service: [posts, comments, query, event-bus, client, moderation]
+
     steps:
+      # ----------------------
+      # Checkout repository
+      # ----------------------
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
+      # ----------------------
+      # Set up Node.js
+      # ----------------------
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: "20"
 
       # ----------------------
-      # Unit Tests
+      # Install dependencies and run tests
       # ----------------------
-      - name: Install & test posts
-        working-directory: ./posts
-        run: |
-          npm install
-          npm test
-
-      - name: Install & test event-bus
-        working-directory: ./event-bus
-        run: |
-          npm install
-          npm test
-
-      - name: Install & test client
-        working-directory: ./client
+      - name: Install dependencies & Run tests
+        working-directory: ${{ matrix.service }}
         run: |
           npm install
           npm test
 
       # ----------------------
-      # Docker Build & Push
+      # Setup Docker
       # ----------------------
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -52,7 +50,11 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push Docker images
+      # ----------------------
+      # Build and push Docker images
+      # ----------------------
+      - name: Build and push Docker image
+        working-directory: ${{ matrix.service }}
         run: |
-          docker-compose build
-          docker-compose push
+          docker build -t reveca/${{ matrix.service }} .
+          docker push reveca/${{ matrix.service }}
