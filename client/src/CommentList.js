@@ -1,4 +1,3 @@
-
 const CommentList = ({ comments }) => {
 
   const renderedComments = comments.map((comment) => {
@@ -21,4 +20,5 @@ const CommentList = ({ comments }) => {
   return <ul>{renderedComments}</ul>;
 };
 
-export default CommentList;
+export default CommentList;  
+
